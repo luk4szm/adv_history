@@ -41,8 +41,8 @@ class AdvertisementChange
     public static function create(
         Advertisement $advertisement,
         string $property,
-        string $oldValue,
-        string $newValue,
+        ?string $oldValue,
+        ?string $newValue,
     ): self
     {
         return (new self())

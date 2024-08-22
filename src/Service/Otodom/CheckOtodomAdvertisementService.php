@@ -69,8 +69,7 @@ class CheckOtodomAdvertisementService
 
         $advertisement->{'set' . ucfirst($property)}($newValue);
     }
-
-    private function dumpValueToString(mixed $value): string
+    private function dumpValueToString(mixed $value): ?string
     {
         if (is_array($value)) {
             return json_encode($value);
