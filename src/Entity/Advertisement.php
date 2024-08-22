@@ -66,6 +66,12 @@ class Advertisement
     #[ORM\OneToMany(targetEntity: AdvertisementChange::class, mappedBy: 'advertisement', orphanRemoval: true)]
     private Collection $changes;
 
+    /**
+     * @var Collection<int, OtodomResponse>
+     */
+    #[ORM\OneToMany(targetEntity: OtodomResponse::class, mappedBy: 'advertisement', orphanRemoval: true)]
+    private Collection $otodomResponses;
+
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $createdAt = null;
 
@@ -81,6 +87,7 @@ class Advertisement
     public function __construct()
     {
         $this->changes = new ArrayCollection();
+        $this->otodomResponses = new ArrayCollection();
     }
 
     public static function createFromDto(OtodomAdvertisementDataDto $dto): static
@@ -307,6 +314,36 @@ class Advertisement
             // set the owning side to null (unless already changed)
             if ($change->getAdvertisement() === $this) {
                 $change->setAdvertisement(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, OtodomResponse>
+     */
+    public function getOtodomResponses(): Collection
+    {
+        return $this->otodomResponses;
+    }
+
+    public function addOtodomResponse(OtodomResponse $otodomResponse): static
+    {
+        if (!$this->otodomResponses->contains($otodomResponse)) {
+            $this->otodomResponses->add($otodomResponse);
+            $otodomResponse->setAdvertisement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOtodomResponse(OtodomResponse $otodomResponse): static
+    {
+        if ($this->otodomResponses->removeElement($otodomResponse)) {
+            // set the owning side to null (unless already changed)
+            if ($otodomResponse->getAdvertisement() === $this) {
+                $otodomResponse->setAdvertisement(null);
             }
         }
 

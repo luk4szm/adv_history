@@ -4,7 +4,9 @@ namespace App\Service\Otodom;
 
 use App\Entity\Advertisement;
 use App\Entity\AdvertisementChange;
+use App\Entity\OtodomResponse;
 use App\Repository\AdvertisementChangeRepository;
+use App\Repository\OtodomResponseRepository;
 use App\Utils\Curl\Curl;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -15,6 +17,7 @@ class CheckOtodomAdvertisementService
     public function __construct(
         private readonly FetchOtodomAdvertisementDataService $fetchService,
         private readonly AdvertisementChangeRepository       $changeRepository,
+        private readonly OtodomResponseRepository            $responseRepository,
     ) {
         $this->changes = new ArrayCollection();
     }
@@ -27,8 +30,9 @@ class CheckOtodomAdvertisementService
      */
     public function checkStatus(Advertisement $advertisement): void
     {
-        $data = Curl::get($advertisement->getUrl());
-        $dto  = $this->fetchService->fetch($data);
+        $data    = Curl::get($advertisement->getUrl());
+        $dto     = $this->fetchService->fetch($data);
+        $changes = false;
 
         foreach ($dto as $property => $newValue) {
             if (in_array($property, ['owner', 'createdAt'], true)) {
@@ -42,7 +46,13 @@ class CheckOtodomAdvertisementService
                 || !$newValue instanceof \DateTime && $newValue !== $oldValue
             ) {
                 $this->saveChange($advertisement, $property, $oldValue, $newValue);
+
+                $changes = true;
             }
+        }
+
+        if ($changes) {
+            $this->saveResponse($advertisement);
         }
     }
 
@@ -69,6 +79,16 @@ class CheckOtodomAdvertisementService
 
         $advertisement->{'set' . ucfirst($property)}($newValue);
     }
+
+    private function saveResponse(Advertisement $advertisement): void
+    {
+        $response = new OtodomResponse();
+        $response->setAdvertisement($advertisement)
+            ->setResponse(json_encode($this->fetchService->ad));
+
+        $this->responseRepository->save($response, false);
+    }
+
     private function dumpValueToString(mixed $value): ?string
     {
         if (is_array($value)) {

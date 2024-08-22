@@ -6,8 +6,10 @@ namespace App\Service\Otodom;
 
 use App\Dto\OtodomAdvertisementDataDto;
 
-readonly class FetchOtodomAdvertisementDataService
+class FetchOtodomAdvertisementDataService
 {
+    public array $ad;
+
     /**
      * Read the website source, extract the offer data and save it in dto
      *
@@ -20,8 +22,8 @@ readonly class FetchOtodomAdvertisementDataService
         $dom = new \DOMDocument();
         @$dom->loadHTML($siteContent, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
-        $data = json_decode($dom->getElementById('__NEXT_DATA__')->textContent, true);
-        $ad   = $data['props']['pageProps']['ad'];
+        $data     = json_decode($dom->getElementById('__NEXT_DATA__')->textContent, true);
+        $this->ad = $ad = $data['props']['pageProps']['ad'];
 
         return new OtodomAdvertisementDataDto(
             $ad['status'],
