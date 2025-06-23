@@ -42,7 +42,7 @@ class Advertisement
     #[ORM\Column(nullable: true)]
     private ?int $buildYear = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?array $roomsNum = [];
 
     #[ORM\Column(nullable: true)]
