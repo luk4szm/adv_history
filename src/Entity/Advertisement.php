@@ -43,7 +43,7 @@ class Advertisement
     private ?int $buildYear = null;
 
     #[ORM\Column]
-    private array $roomsNum = [];
+    private ?array $roomsNum = [];
 
     #[ORM\Column(nullable: true)]
     private ?array $buildingType = null;
@@ -218,12 +218,12 @@ class Advertisement
         return $this;
     }
 
-    public function getRoomsNum(): array
+    public function getRoomsNum(): ?array
     {
         return $this->roomsNum;
     }
 
-    public function setRoomsNum(array $roomsNum): static
+    public function setRoomsNum(?array $roomsNum): static
     {
         $this->roomsNum = $roomsNum;
 

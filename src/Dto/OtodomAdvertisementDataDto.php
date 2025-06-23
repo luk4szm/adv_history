@@ -15,7 +15,7 @@ readonly class OtodomAdvertisementDataDto
         public float              $area,
         public ?float             $terrainArea,
         public ?int               $buildYear,
-        public array              $roomsNum,
+        public ?array             $roomsNum,
         public ?array             $buildingType,
         public ?array             $extrasTypes,
         public ?array             $heatingTypes,
